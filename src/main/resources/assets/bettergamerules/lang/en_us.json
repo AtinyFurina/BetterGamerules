@@ -1,0 +1,23 @@
+{
+  "screen.bettergamerules.title": "Game Rules",
+  "screen.bettergamerules.simple_mode": "Simple Mode",
+  "screen.bettergamerules.advanced_mode": "Advanced Mode",
+  "screen.bettergamerules.search": "Search rules...",
+  "screen.bettergamerules.customize": "Customize List",
+  "screen.bettergamerules.customize_title": "Customize Simple Mode Rules",
+  "screen.bettergamerules.reset_default": "Reset Default",
+  "screen.bettergamerules.all_rules": "All Rules",
+  "screen.bettergamerules.selected_rules": "Selected Rules",
+  "screen.bettergamerules.move_up": "Move Up",
+  "screen.bettergamerules.move_down": "Move Down",
+  "screen.bettergamerules.no_rules_selected": "Please keep at least one rule",
+  "screen.bettergamerules.filter_all": "All",
+  "screen.bettergamerules.filter_boolean": "Boolean",
+  "screen.bettergamerules.filter_integer": "Integer",
+
+  "key.bettergamerules.open": "Open Game Rules",
+  "key.categories.bettergamerules": "BetterGamerules",
+
+  "message.bettergamerules.no_permission": "You don't have permission to modify game rules!",
+  "message.bettergamerules.gamerule_changed": "Game rule %s has been set to %s"
+}

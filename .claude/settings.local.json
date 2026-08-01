@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Program Files/Java/jdk-17.0.20.8-hotspot/**)",
+      "Read(//c/Program Files/**)",
+      "Skill(fewer-permission-prompts)",
+      "Skill(fewer-permission-prompts:*)"
+    ]
+  }
+}

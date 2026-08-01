@@ -1,0 +1,173 @@
+{
+  "screen.bettergamerules.title": "游戏规则",
+  "screen.bettergamerules.simple_mode": "简易模式",
+  "screen.bettergamerules.advanced_mode": "高级模式",
+  "screen.bettergamerules.search": "搜索规则...",
+  "screen.bettergamerules.customize": "自定义列表",
+  "screen.bettergamerules.customize_title": "自定义简易模式规则",
+  "screen.bettergamerules.reset_default": "重置默认",
+  "screen.bettergamerules.all_rules": "所有规则",
+  "screen.bettergamerules.selected_rules": "已选规则",
+  "screen.bettergamerules.move_up": "上移",
+  "screen.bettergamerules.move_down": "下移",
+  "screen.bettergamerules.no_rules_selected": "请至少保留一条规则",
+  "screen.bettergamerules.filter_all": "全部",
+  "screen.bettergamerules.filter_boolean": "开关型",
+  "screen.bettergamerules.filter_integer": "数值型",
+
+  "key.bettergamerules.open": "打开游戏规则界面",
+  "key.categories.bettergamerules": "BetterGamerules",
+
+  "message.bettergamerules.no_permission": "你没有权限修改游戏规则！",
+  "message.bettergamerules.gamerule_changed": "游戏规则 %s 已设置为 %s",
+
+  "gamerule.bettergamerules.doFireTick": "火焰蔓延",
+  "gamerule.bettergamerules.doFireTick.desc": "控制火焰是否会蔓延并破坏方块",
+
+  "gamerule.bettergamerules.keepInventory": "死亡不掉落",
+  "gamerule.bettergamerules.keepInventory.desc": "玩家死亡后是否保留物品栏和经验",
+
+  "gamerule.bettergamerules.randomTickSpeed": "随机刻速度",
+  "gamerule.bettergamerules.randomTickSpeed.desc": "每区块每刻的随机方块更新次数。默认3，越高作物生长越快，0则停止",
+
+  "gamerule.bettergamerules.doDaylightCycle": "日夜循环",
+  "gamerule.bettergamerules.doDaylightCycle.desc": "是否进行日夜交替。关闭后时间将静止",
+
+  "gamerule.bettergamerules.doMobSpawning": "生物生成",
+  "gamerule.bettergamerules.doMobSpawning.desc": "是否允许自然生成生物（怪物和动物）",
+
+  "gamerule.bettergamerules.doWeatherCycle": "天气循环",
+  "gamerule.bettergamerules.doWeatherCycle.desc": "是否自动切换晴天、雨天和雷暴天气",
+
+  "gamerule.bettergamerules.mobGriefing": "生物破坏",
+  "gamerule.bettergamerules.mobGriefing.desc": "爬行者、末影人、凋灵、恶魂、羊等是否能改变或破坏方块",
+
+  "gamerule.bettergamerules.commandBlockOutput": "命令反馈",
+  "gamerule.bettergamerules.commandBlockOutput.desc": "命令方块执行命令时是否在聊天栏通知管理员",
+
+  "gamerule.bettergamerules.doInsomnia": "幻翼生成",
+  "gamerule.bettergamerules.doInsomnia.desc": "连续3天以上不睡觉的玩家是否会生成幻翼",
+
+  "gamerule.bettergamerules.disableRaids": "禁用袭击",
+  "gamerule.bettergamerules.disableRaids.desc": "是否禁用村庄袭击事件。开启后不祥之兆不会触发袭击",
+
+  "gamerule.bettergamerules.playersSleepingPercentage": "睡觉跳过比例",
+  "gamerule.bettergamerules.playersSleepingPercentage.desc": "跳过夜晚所需的睡觉玩家百分比。默认100（全部在线玩家），设为0则1人即可",
+
+  "gamerule.bettergamerules.doTraderSpawning": "流浪商人",
+  "gamerule.bettergamerules.doTraderSpawning.desc": "是否生成流浪商人，包括喝药水和隐身效果",
+
+  "gamerule.bettergamerules.announceAdvancements": "成就公告",
+  "gamerule.bettergamerules.announceAdvancements.desc": "是否在聊天栏公告玩家达成的进度/成就",
+
+  "gamerule.bettergamerules.doImmediateRespawn": "立即重生",
+  "gamerule.bettergamerules.doImmediateRespawn.desc": "玩家死亡后是否跳过死亡界面直接重生",
+
+  "gamerule.bettergamerules.doLimitedCrafting": "限制合成",
+  "gamerule.bettergamerules.doLimitedCrafting.desc": "玩家是否只能合成已解锁的配方，未解锁配方无法合成",
+
+  "gamerule.bettergamerules.doVinesSpread": "藤蔓蔓延",
+  "gamerule.bettergamerules.doVinesSpread.desc": "藤蔓、发光浆果、垂泪藤和缠怨藤是否自然生长蔓延",
+
+  "gamerule.bettergamerules.doWardenSpawning": "监守者生成",
+  "gamerule.bettergamerules.doWardenSpawning.desc": "幽匿尖啸体是否能召唤监守者",
+
+  "gamerule.bettergamerules.forgiveDeadPlayers": "原谅死亡玩家",
+  "gamerule.bettergamerules.forgiveDeadPlayers.desc": "被激怒的中立生物在目标玩家死亡后是否恢复中立",
+
+  "gamerule.bettergamerules.logAdminCommands": "记录管理命令",
+  "gamerule.bettergamerules.logAdminCommands.desc": "是否在服务器日志中记录管理员执行的命令",
+
+  "gamerule.bettergamerules.maxCommandChainLength": "命令链最大长度",
+  "gamerule.bettergamerules.maxCommandChainLength.desc": "连锁型命令方块链的最大执行深度。默认65536",
+
+  "gamerule.bettergamerules.maxEntityCramming": "实体挤压上限",
+  "gamerule.bettergamerules.maxEntityCramming.desc": "单个方块空间内可容纳的实体数上限，超出后每半秒受3点窒息伤害。默认24",
+
+  "gamerule.bettergamerules.reducedDebugInfo": "简化调试信息",
+  "gamerule.bettergamerules.reducedDebugInfo.desc": "是否简化F3调试界面。开启后部分信息对非管理员隐藏",
+
+  "gamerule.bettergamerules.sendCommandFeedback": "命令反馈",
+  "gamerule.bettergamerules.sendCommandFeedback.desc": "是否在聊天栏显示命令执行的结果反馈",
+
+  "gamerule.bettergamerules.showDeathMessages": "死亡消息",
+  "gamerule.bettergamerules.showDeathMessages.desc": "是否在聊天栏显示玩家死亡消息",
+
+  "gamerule.bettergamerules.spawnRadius": "出生点半径",
+  "gamerule.bettergamerules.spawnRadius.desc": "出生点保护区域的半径。默认10，设置为0则不生成保护区域",
+
+  "gamerule.bettergamerules.universalAnger": "普遍愤怒",
+  "gamerule.bettergamerules.universalAnger.desc": "被激怒的中立生物是否攻击附近所有玩家，而非仅攻击激怒它的玩家",
+
+  "gamerule.bettergamerules.doPatrolSpawning": "巡逻队生成",
+  "gamerule.bettergamerules.doPatrolSpawning.desc": "是否生成掠夺者巡逻队。关闭后巡逻队不再自然生成",
+
+  "gamerule.bettergamerules.doEntityDrops": "实体掉落",
+  "gamerule.bettergamerules.doEntityDrops.desc": "非生物实体（矿车、船、物品展示框等）被破坏时是否掉落物品",
+
+  "gamerule.bettergamerules.blockExplosionDropDecay": "方块爆炸掉落衰减",
+  "gamerule.bettergamerules.blockExplosionDropDecay.desc": "被非生物爆炸（如TNT、床）摧毁的方块是否部分掉落物消失",
+
+  "gamerule.bettergamerules.mobExplosionDropDecay": "生物爆炸掉落衰减",
+  "gamerule.bettergamerules.mobExplosionDropDecay.desc": "被生物爆炸（如爬行者、恶魂火球）摧毁的方块是否部分掉落物消失",
+
+  "gamerule.bettergamerules.tntExplosionDropDecay": "TNT爆炸掉落衰减",
+  "gamerule.bettergamerules.tntExplosionDropDecay.desc": "被TNT爆炸摧毁的方块是否部分掉落物消失",
+
+  "gamerule.bettergamerules.snowAccumulationHeight": "积雪高度",
+  "gamerule.bettergamerules.snowAccumulationHeight.desc": "下雪时每个方块上积累的雪层数上限。默认1，设置为0不会积雪",
+
+  "gamerule.bettergamerules.waterSourceConversion": "水源转换",
+  "gamerule.bettergamerules.waterSourceConversion.desc": "流动的水接触两个以上水源方块时是否形成新水源（无限水）",
+
+  "gamerule.bettergamerules.lavaSourceConversion": "熔岩源转换",
+  "gamerule.bettergamerules.lavaSourceConversion.desc": "是否允许流动的熔岩形成无限熔岩源（下界中）",
+
+  "gamerule.bettergamerules.globalSoundEvents": "全局声音事件",
+  "gamerule.bettergamerules.globalSoundEvents.desc": "是否所有玩家都能听到全局声音事件（如凋灵、末影龙、远古守卫者）",
+
+  "gamerule.bettergamerules.commandModificationBlockLimit": "命令修改方块上限",
+  "gamerule.bettergamerules.commandModificationBlockLimit.desc": "/fill、/clone等命令单次可修改的最大方块数量。默认32768",
+
+  "gamerule.bettergamerules.maxCommandForkCount": "命令分支上限",
+  "gamerule.bettergamerules.maxCommandForkCount.desc": "单次命令执行中execute等指令的最大分支数量。默认65536",
+
+  "gamerule.bettergamerules.disableElytraMovementCheck": "禁用鞘翅检测",
+  "gamerule.bettergamerules.disableElytraMovementCheck.desc": "是否禁用鞘翅飞行的反作弊移动检测。服务器可开启以允许高速鞘翅飞行",
+
+  "gamerule.bettergamerules.spawnChunkRadius": "出生区块半径",
+  "gamerule.bettergamerules.spawnChunkRadius.desc": "出生点周围始终保持加载的区块半径",
+
+  "gamerule.bettergamerules.enderPearlsVanishOnDeath": "末影珍珠死亡消失",
+  "gamerule.bettergamerules.enderPearlsVanishOnDeath.desc": "投掷末影珍珠的玩家在珍珠落地前死亡时，珍珠是否消失",
+
+  "gamerule.bettergamerules.fallDamage": "坠落伤害",
+  "gamerule.bettergamerules.fallDamage.desc": "玩家是否受到坠落伤害",
+
+  "gamerule.bettergamerules.fireDamage": "火焰伤害",
+  "gamerule.bettergamerules.fireDamage.desc": "玩家是否受到火焰伤害（不包括熔岩）",
+
+  "gamerule.bettergamerules.freezeDamage": "冰冻伤害",
+  "gamerule.bettergamerules.freezeDamage.desc": "玩家在细雪中是否受到冰冻伤害",
+
+  "gamerule.bettergamerules.naturalRegeneration": "自然恢复",
+  "gamerule.bettergamerules.naturalRegeneration.desc": "玩家饱食度充足时是否自然恢复生命值。关闭后需用金苹果、药水等恢复",
+
+  "gamerule.bettergamerules.doTileDrops": "方块掉落",
+  "gamerule.bettergamerules.doTileDrops.desc": "破坏方块时是否掉落物品。关闭后破坏方块不掉落任何东西",
+
+  "gamerule.bettergamerules.projectilesCanBreakBlocks": "弹射物破坏方块",
+  "gamerule.bettergamerules.projectilesCanBreakBlocks.desc": "弹射物（凋灵之首、恶魂火球等）是否能破坏方块",
+
+  "gamerule.bettergamerules.mobExplosionBlockDamage": "生物爆炸破坏方块",
+  "gamerule.bettergamerules.mobExplosionBlockDamage.desc": "生物爆炸（爬行者等）是否能破坏方块（不含掉落是否衰减）",
+
+  "gamerule.bettergamerules.tntExplosionBlockDamage": "TNT爆炸破坏方块",
+  "gamerule.bettergamerules.tntExplosionBlockDamage.desc": "TNT爆炸是否能破坏方块（不含掉落是否衰减）",
+
+  "gamerule.bettergamerules.playersNetherPortalDefaultDelay": "下界传送门默认延迟",
+  "gamerule.bettergamerules.playersNetherPortalDefaultDelay.desc": "非创造模式玩家通过下界传送门前需等待的游戏刻数。默认80刻（4秒）",
+
+  "gamerule.bettergamerules.playersNetherPortalCreativeDelay": "创造模式传送门延迟",
+  "gamerule.bettergamerules.playersNetherPortalCreativeDelay.desc": "创造模式玩家通过下界传送门前的等待时间。默认1刻（瞬间通过）"
+}

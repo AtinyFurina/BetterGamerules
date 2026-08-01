@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jar *)",
+      "Bash(javap *)",
+      "Bash(curl *)",
+      "Bash(unzip *)",
+      "Bash(mkdir *)",
+      "Bash(export JAVA_HOME=*)",
+      "Bash(/c/Users/AtinyFurina/gradle-dist/*)"
+    ]
+  }
+}
