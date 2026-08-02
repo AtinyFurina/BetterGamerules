@@ -8,16 +8,163 @@
   "screen.bettergamerules.reset_default": "Reset Default",
   "screen.bettergamerules.all_rules": "All Rules",
   "screen.bettergamerules.selected_rules": "Selected Rules",
-  "screen.bettergamerules.move_up": "Move Up",
-  "screen.bettergamerules.move_down": "Move Down",
-  "screen.bettergamerules.no_rules_selected": "Please keep at least one rule",
-  "screen.bettergamerules.filter_all": "All",
-  "screen.bettergamerules.filter_boolean": "Boolean",
-  "screen.bettergamerules.filter_integer": "Integer",
 
   "key.bettergamerules.open": "Open Game Rules",
   "key.categories.bettergamerules": "BetterGamerules",
 
   "message.bettergamerules.no_permission": "You don't have permission to modify game rules!",
-  "message.bettergamerules.gamerule_changed": "Game rule %s has been set to %s"
+  "message.bettergamerules.gamerule_changed": "Game rule %s has been set to %s",
+
+  "gamerule.bettergamerules.toggle.on": "✓ On",
+  "gamerule.bettergamerules.toggle.off": "✗ Off",
+
+  "gamerule.bettergamerules.doFireTick": "Fire Spread",
+  "gamerule.bettergamerules.doFireTick.desc": "Controls whether fire spreads and destroys blocks",
+
+  "gamerule.bettergamerules.keepInventory": "Keep Inventory",
+  "gamerule.bettergamerules.keepInventory.desc": "Whether players keep their inventory and experience after death",
+
+  "gamerule.bettergamerules.randomTickSpeed": "Random Tick Speed",
+  "gamerule.bettergamerules.randomTickSpeed.desc": "Number of random block updates per chunk per tick. Default 3, higher=faster crop growth, 0=disabled",
+
+  "gamerule.bettergamerules.doDaylightCycle": "Daylight Cycle",
+  "gamerule.bettergamerules.doDaylightCycle.desc": "Whether the day-night cycle advances. Time freezes when disabled",
+
+  "gamerule.bettergamerules.doMobSpawning": "Mob Spawning",
+  "gamerule.bettergamerules.doMobSpawning.desc": "Whether mobs (monsters and animals) spawn naturally",
+
+  "gamerule.bettergamerules.doWeatherCycle": "Weather Cycle",
+  "gamerule.bettergamerules.doWeatherCycle.desc": "Whether weather transitions between clear, rain, and thunderstorm automatically",
+
+  "gamerule.bettergamerules.mobGriefing": "Mob Griefing",
+  "gamerule.bettergamerules.mobGriefing.desc": "Whether creepers, endermen, withers, ghasts, sheep, etc. can change or destroy blocks",
+
+  "gamerule.bettergamerules.commandBlockOutput": "Command Block Output",
+  "gamerule.bettergamerules.commandBlockOutput.desc": "Whether command blocks notify admins in chat when executing commands",
+
+  "gamerule.bettergamerules.doInsomnia": "Phantom Spawning",
+  "gamerule.bettergamerules.doInsomnia.desc": "Whether phantoms spawn for players who haven't slept for 3+ days",
+
+  "gamerule.bettergamerules.disableRaids": "Disable Raids",
+  "gamerule.bettergamerules.disableRaids.desc": "Whether village raids are disabled. Bad Omen won't trigger raids when enabled",
+
+  "gamerule.bettergamerules.playersSleepingPercentage": "Sleep Percentage",
+  "gamerule.bettergamerules.playersSleepingPercentage.desc": "Percentage of online players needed to sleep to skip the night. Default 100, set to 0 for 1 player",
+
+  "gamerule.bettergamerules.doTraderSpawning": "Wandering Trader Spawning",
+  "gamerule.bettergamerules.doTraderSpawning.desc": "Whether wandering traders spawn, including their potion and invisibility effects",
+
+  "gamerule.bettergamerules.announceAdvancements": "Announce Advancements",
+  "gamerule.bettergamerules.announceAdvancements.desc": "Whether advancements are announced in chat for all players",
+
+  "gamerule.bettergamerules.doImmediateRespawn": "Immediate Respawn",
+  "gamerule.bettergamerules.doImmediateRespawn.desc": "Whether players respawn immediately without showing the death screen",
+
+  "gamerule.bettergamerules.doLimitedCrafting": "Limited Crafting",
+  "gamerule.bettergamerules.doLimitedCrafting.desc": "Whether players can only craft recipes they have unlocked",
+
+  "gamerule.bettergamerules.doVinesSpread": "Vines Spread",
+  "gamerule.bettergamerules.doVinesSpread.desc": "Whether vines, glow berries, weeping vines, and twisting vines grow and spread naturally",
+
+  "gamerule.bettergamerules.doWardenSpawning": "Warden Spawning",
+  "gamerule.bettergamerules.doWardenSpawning.desc": "Whether sculk shriekers can summon wardens",
+
+  "gamerule.bettergamerules.forgiveDeadPlayers": "Forgive Dead Players",
+  "gamerule.bettergamerules.forgiveDeadPlayers.desc": "Whether angered neutral mobs become neutral again after their target dies",
+
+  "gamerule.bettergamerules.logAdminCommands": "Log Admin Commands",
+  "gamerule.bettergamerules.logAdminCommands.desc": "Whether admin commands are logged in the server log",
+
+  "gamerule.bettergamerules.maxCommandChainLength": "Max Command Chain Length",
+  "gamerule.bettergamerules.maxCommandChainLength.desc": "Maximum depth of chained command block execution. Default 65536",
+
+  "gamerule.bettergamerules.maxEntityCramming": "Max Entity Cramming",
+  "gamerule.bettergamerules.maxEntityCramming.desc": "Max entities that can occupy a single block before taking 3 suffocation damage per half-second. Default 24",
+
+  "gamerule.bettergamerules.reducedDebugInfo": "Reduced Debug Info",
+  "gamerule.bettergamerules.reducedDebugInfo.desc": "Whether the F3 debug screen is simplified. Some info hidden from non-admins when enabled",
+
+  "gamerule.bettergamerules.sendCommandFeedback": "Send Command Feedback",
+  "gamerule.bettergamerules.sendCommandFeedback.desc": "Whether command execution feedback appears in chat",
+
+  "gamerule.bettergamerules.showDeathMessages": "Show Death Messages",
+  "gamerule.bettergamerules.showDeathMessages.desc": "Whether player death messages appear in chat",
+
+  "gamerule.bettergamerules.spawnRadius": "Spawn Radius",
+  "gamerule.bettergamerules.spawnRadius.desc": "Radius of the spawn protection area. Default 10, set to 0 to disable",
+
+  "gamerule.bettergamerules.universalAnger": "Universal Anger",
+  "gamerule.bettergamerules.universalAnger.desc": "Whether angered neutral mobs attack all nearby players, not just the one that angered them",
+
+  "gamerule.bettergamerules.doPatrolSpawning": "Patrol Spawning",
+  "gamerule.bettergamerules.doPatrolSpawning.desc": "Whether pillager patrols spawn. Disabled prevents natural patrol generation",
+
+  "gamerule.bettergamerules.doEntityDrops": "Entity Drops",
+  "gamerule.bettergamerules.doEntityDrops.desc": "Whether non-mob entities (minecarts, boats, item frames, etc.) drop items when destroyed",
+
+  "gamerule.bettergamerules.blockExplosionDropDecay": "Block Explosion Drop Decay",
+  "gamerule.bettergamerules.blockExplosionDropDecay.desc": "Whether blocks destroyed by non-entity explosions (TNT, beds) have some drops removed",
+
+  "gamerule.bettergamerules.mobExplosionDropDecay": "Mob Explosion Drop Decay",
+  "gamerule.bettergamerules.mobExplosionDropDecay.desc": "Whether blocks destroyed by mob explosions (creepers, ghast fireballs) have some drops removed",
+
+  "gamerule.bettergamerules.tntExplosionDropDecay": "TNT Explosion Drop Decay",
+  "gamerule.bettergamerules.tntExplosionDropDecay.desc": "Whether blocks destroyed by TNT explosions have some drops removed",
+
+  "gamerule.bettergamerules.snowAccumulationHeight": "Snow Accumulation Height",
+  "gamerule.bettergamerules.snowAccumulationHeight.desc": "Max number of snow layers that accumulate per block during snowfall. Default 1, 0 prevents snow buildup",
+
+  "gamerule.bettergamerules.waterSourceConversion": "Water Source Conversion",
+  "gamerule.bettergamerules.waterSourceConversion.desc": "Whether flowing water creates new water sources when touching 2+ source blocks (infinite water)",
+
+  "gamerule.bettergamerules.lavaSourceConversion": "Lava Source Conversion",
+  "gamerule.bettergamerules.lavaSourceConversion.desc": "Whether flowing lava can form infinite lava sources (in the Nether)",
+
+  "gamerule.bettergamerules.globalSoundEvents": "Global Sound Events",
+  "gamerule.bettergamerules.globalSoundEvents.desc": "Whether all players hear global sound events (e.g. wither, ender dragon, elder guardian)",
+
+  "gamerule.bettergamerules.commandModificationBlockLimit": "Command Modification Block Limit",
+  "gamerule.bettergamerules.commandModificationBlockLimit.desc": "Max blocks that /fill, /clone, etc. can modify in a single operation. Default 32768",
+
+  "gamerule.bettergamerules.maxCommandForkCount": "Max Command Fork Count",
+  "gamerule.bettergamerules.maxCommandForkCount.desc": "Maximum number of branches created by /execute and similar in a single command. Default 65536",
+
+  "gamerule.bettergamerules.disableElytraMovementCheck": "Disable Elytra Movement Check",
+  "gamerule.bettergamerules.disableElytraMovementCheck.desc": "Whether to disable server-side anti-cheat movement checks for elytra flight",
+
+  "gamerule.bettergamerules.spawnChunkRadius": "Spawn Chunk Radius",
+  "gamerule.bettergamerules.spawnChunkRadius.desc": "Radius of chunks around the world spawn that stay loaded at all times",
+
+  "gamerule.bettergamerules.enderPearlsVanishOnDeath": "Ender Pearls Vanish on Death",
+  "gamerule.bettergamerules.enderPearlsVanishOnDeath.desc": "Whether thrown ender pearls vanish when the player dies before the pearl lands",
+
+  "gamerule.bettergamerules.fallDamage": "Fall Damage",
+  "gamerule.bettergamerules.fallDamage.desc": "Whether players take fall damage",
+
+  "gamerule.bettergamerules.fireDamage": "Fire Damage",
+  "gamerule.bettergamerules.fireDamage.desc": "Whether players take fire damage (excluding lava)",
+
+  "gamerule.bettergamerules.freezeDamage": "Freeze Damage",
+  "gamerule.bettergamerules.freezeDamage.desc": "Whether players take freeze damage from powder snow",
+
+  "gamerule.bettergamerules.naturalRegeneration": "Natural Regeneration",
+  "gamerule.bettergamerules.naturalRegeneration.desc": "Whether players naturally regenerate health when hunger is full. Disable for golden apple / potion-only healing",
+
+  "gamerule.bettergamerules.doTileDrops": "Tile Drops",
+  "gamerule.bettergamerules.doTileDrops.desc": "Whether blocks drop items when broken. Nothing drops when disabled",
+
+  "gamerule.bettergamerules.projectilesCanBreakBlocks": "Projectiles Can Break Blocks",
+  "gamerule.bettergamerules.projectilesCanBreakBlocks.desc": "Whether projectiles (wither skulls, ghast fireballs, etc.) can destroy blocks",
+
+  "gamerule.bettergamerules.mobExplosionBlockDamage": "Mob Explosion Block Damage",
+  "gamerule.bettergamerules.mobExplosionBlockDamage.desc": "Whether mob explosions (creepers, etc.) can destroy blocks (separate from drop decay)",
+
+  "gamerule.bettergamerules.tntExplosionBlockDamage": "TNT Explosion Block Damage",
+  "gamerule.bettergamerules.tntExplosionBlockDamage.desc": "Whether TNT explosions can destroy blocks (separate from drop decay)",
+
+  "gamerule.bettergamerules.playersNetherPortalDefaultDelay": "Nether Portal Default Delay",
+  "gamerule.bettergamerules.playersNetherPortalDefaultDelay.desc": "Ticks non-creative players must stand in a nether portal before teleporting. Default 80 (4 seconds)",
+
+  "gamerule.bettergamerules.playersNetherPortalCreativeDelay": "Nether Portal Creative Delay",
+  "gamerule.bettergamerules.playersNetherPortalCreativeDelay.desc": "Ticks creative players must stand in a nether portal before teleporting. Default 1 (instant)"
 }

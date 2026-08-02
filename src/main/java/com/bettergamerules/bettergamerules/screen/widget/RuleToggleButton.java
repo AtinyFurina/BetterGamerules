@@ -51,13 +51,14 @@ public class RuleToggleButton extends AbstractWidget {
         g.fill(getX(), getY(), getX() + W, getY() + 1, 0x40FFFFFF);
         g.fill(getX(), getY() + H - 1, getX() + W, getY() + H, 0x40000000);
 
-        // Text — centered
-        String plain = value ? "✓ 开启" : "✗ 关闭";
+        // Text — centered, localized
+        String key = value ? "gamerule.bettergamerules.toggle.on" : "gamerule.bettergamerules.toggle.off";
+        Component text = Component.translatable(key);
         var font = Minecraft.getInstance().font;
-        int pw = font.width(plain);
+        int pw = font.width(text);
         int tx = getX() + (W - pw) / 2;
         int ty = getY() + (H - 8) / 2;
-        g.drawString(font, plain, tx, ty, 0xFFFFFF);
+        g.drawString(font, text, tx, ty, 0xFFFFFF);
     }
 
     @Override

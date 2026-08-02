@@ -8,18 +8,14 @@
   "screen.bettergamerules.reset_default": "重置默认",
   "screen.bettergamerules.all_rules": "所有规则",
   "screen.bettergamerules.selected_rules": "已选规则",
-  "screen.bettergamerules.move_up": "上移",
-  "screen.bettergamerules.move_down": "下移",
-  "screen.bettergamerules.no_rules_selected": "请至少保留一条规则",
-  "screen.bettergamerules.filter_all": "全部",
-  "screen.bettergamerules.filter_boolean": "开关型",
-  "screen.bettergamerules.filter_integer": "数值型",
-
   "key.bettergamerules.open": "打开游戏规则界面",
   "key.categories.bettergamerules": "BetterGamerules",
 
   "message.bettergamerules.no_permission": "你没有权限修改游戏规则！",
   "message.bettergamerules.gamerule_changed": "游戏规则 %s 已设置为 %s",
+
+  "gamerule.bettergamerules.toggle.on": "✓ 开启",
+  "gamerule.bettergamerules.toggle.off": "✗ 关闭",
 
   "gamerule.bettergamerules.doFireTick": "火焰蔓延",
   "gamerule.bettergamerules.doFireTick.desc": "控制火焰是否会蔓延并破坏方块",
