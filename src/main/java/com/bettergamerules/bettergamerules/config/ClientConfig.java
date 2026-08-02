@@ -12,16 +12,16 @@ import java.util.List;
  */
 public class ClientConfig {
 
-    public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec SPEC;
 
     /** List of rule IDs to display in Simple Mode.
      *  The player can customize this list through the UI.
      *  Default: 12 most commonly used game rules. */
-    public static ForgeConfigSpec.ConfigValue<List<? extends String>> SIMPLE_MODE_RULES;
+    private static ForgeConfigSpec.ConfigValue<List<? extends String>> SIMPLE_MODE_RULES;
 
     // Default simple mode rules
-    private static final List<String> DEFAULT_RULES = List.of(
+    static final List<String> DEFAULT_RULES = List.of(
             "doFireTick",
             "keepInventory",
             "randomTickSpeed",
@@ -48,7 +48,7 @@ public class ClientConfig {
                 .defineList(
                         "rule_ids",
                         () -> new ArrayList<>(DEFAULT_RULES),
-                        obj -> obj instanceof List && !((List<?>) obj).isEmpty()
+                        obj -> obj instanceof String  // FIXED: was checking for List, now correctly validates String elements
                 );
 
         BUILDER.pop();
@@ -58,10 +58,16 @@ public class ClientConfig {
     /**
      * Get the current simple mode rule list as a new mutable copy.
      */
-    @SuppressWarnings("unchecked")
     public static List<String> getSimpleModeRules() {
         List<? extends String> list = SIMPLE_MODE_RULES.get();
-        return new ArrayList<>((List<String>) list);
+        return new ArrayList<>(list);
+    }
+
+    /**
+     * Get the default simple mode rule list.
+     */
+    public static List<String> getDefaultRules() {
+        return new ArrayList<>(DEFAULT_RULES);
     }
 
     /**
@@ -71,5 +77,6 @@ public class ClientConfig {
     public static void setSimpleModeRules(List<String> newList) {
         if (newList == null || newList.isEmpty()) return;
         SIMPLE_MODE_RULES.set(new ArrayList<>(newList));
+        SPEC.save(); // FIXED: was missing — changes were never written to disk
     }
 }

@@ -18,9 +18,10 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.*;
 
 /**
- * Complete rewrite — all widgets registered via addRenderableWidget.
- * Minecraft handles ALL rendering and event dispatch.
+ * Main screen for editing game rules in-game.
+ * All widgets registered via addRenderableWidget; Minecraft handles event dispatch.
  * Manual scroll by updating widget positions each frame.
+ * Supports both vanilla and modded game rules.
  */
 public class GameruleScreen extends Screen {
 
@@ -45,16 +46,16 @@ public class GameruleScreen extends Screen {
 
     // Data
     private Map<String, GameruleHelper.RuleData> allData = Map.of();
-    private List<String> displayOrder = List.of();
 
-    // Per-entry widgets — created/destroyed on refresh
+    // Per-entry widgets — created/destroyed on data/tab change (NOT on search keystroke)
     private final List<EntryWidgets> entries = new ArrayList<>();
 
     // Scroll
-    private double scroll = 0;
+    private int scroll = 0;
 
-    // Simple reusable clamp
-    private static double clamp(double v, double lo, double hi) { return Math.max(lo, Math.min(hi, v)); }
+    // Cached display names for performance (rebuilt when data/tab changes)
+    private Map<String, String> displayNameCache = Map.of();
+    private Map<String, String> descriptionCache = Map.of();
 
     private record EntryWidgets(String ruleId, AbstractWidget control, String type) {}
 
@@ -64,7 +65,7 @@ public class GameruleScreen extends Screen {
 
     @Override
     protected void init() {
-        this.clearWidgets(); // Screen's own widget list
+        this.clearWidgets();
         this.entries.clear();
 
         this.px = (this.width - PW) / 2;
@@ -81,10 +82,10 @@ public class GameruleScreen extends Screen {
         addRenderableWidget(btnSimple);
         addRenderableWidget(btnAdv);
 
-        // Search box (X+2, Y+2 from default)
+        // Search box
         this.searchBox = new SearchTextBox(font, px + 8, py + 6, PW - 16, 16,
             Component.translatable("screen.bettergamerules.search"));
-        this.searchBox.setResponder(s -> { filter = s; rebuildEntries(); });
+        this.searchBox.setResponder(s -> { filter = s; /* no rebuild — filter in render */ });
         addRenderableWidget(searchBox);
 
         // Customize button
@@ -121,15 +122,34 @@ public class GameruleScreen extends Screen {
 
     public void updateGamerules(Map<String, GameruleHelper.RuleData> data) {
         allData = new LinkedHashMap<>(data);
+        rebuildDisplayCache();
         rebuildEntries();
     }
 
     public Map<String, GameruleHelper.RuleData> getGameruleData() { return allData; }
 
+    /**
+     * Pre-compute display names and descriptions to avoid per-frame translation lookups.
+     */
+    private void rebuildDisplayCache() {
+        Map<String, String> names = new HashMap<>();
+        Map<String, String> descs = new HashMap<>();
+        for (String id : allData.keySet()) {
+            names.put(id, GameruleHelper.getDisplayNameString(id));
+            descs.put(id, GameruleHelper.getDescriptionString(id));
+        }
+        this.displayNameCache = names;
+        this.descriptionCache = descs;
+    }
+
+    /**
+     * Rebuild entry widgets. Called on data change or tab switch only —
+     * search filtering happens in render() via visibility toggle.
+     */
     private void rebuildEntries() {
         if (allData.isEmpty()) return;
 
-        // Remove old entry widgets from Screen
+        // Remove old entry widgets
         for (EntryWidgets ew : entries) {
             removeWidget(ew.control);
         }
@@ -141,34 +161,33 @@ public class GameruleScreen extends Screen {
             ids = new ArrayList<>(ClientConfig.getSimpleModeRules());
         } else {
             ids = new ArrayList<>(allData.keySet());
-            Collections.sort(ids);
+            ids.sort(Comparator.naturalOrder());
         }
-        displayOrder = ids;
 
         // Create widgets for each entry
         for (String id : ids) {
             GameruleHelper.RuleData d = allData.get(id);
             if (d == null) continue;
 
-            boolean isBool = "boolean".equals(d.type()) ||
-                "true".equalsIgnoreCase(d.value()) || "false".equalsIgnoreCase(d.value());
+            // FIXED: search filter — skip non-matching entries entirely instead of
+            // setting w.visible = false (which render would override back to true)
+            if (tab == 1 && !filter.isEmpty()) {
+                String lf = filter.toLowerCase();
+                String displayName = displayNameCache.getOrDefault(id, id);
+                if (!id.toLowerCase().contains(lf)
+                        && !displayName.toLowerCase().contains(lf)) {
+                    continue;
+                }
+            }
 
             AbstractWidget w;
+            boolean isBool = GameruleHelper.isBooleanRule(d);
             if (isBool) {
                 w = new RuleToggleButton(0, 0, id, Boolean.parseBoolean(d.value()));
             } else {
-                int[] range = GameruleHelper.getRuleRange(id);
-                int val = GameruleHelper.parseIntegerValue(d.value(), 0);
-                w = new RuleNumberWidget(0, 0, id, val, range[0], range[1], font);
-            }
-
-            // Apply filter (advanced mode)
-            if (tab == 1 && !filter.isEmpty()) {
-                String lf = filter.toLowerCase();
-                if (!id.toLowerCase().contains(lf) &&
-                    !GameruleHelper.getDisplayNameString(id).toLowerCase().contains(lf)) {
-                    w.visible = false;
-                }
+                int currentVal = GameruleHelper.parseIntegerValue(d.value(), 0);
+                int[] range = GameruleHelper.getRuleRange(id, currentVal);
+                w = new RuleNumberWidget(0, 0, id, currentVal, range[0], range[1], font);
             }
 
             addRenderableWidget(w);
@@ -185,24 +204,23 @@ public class GameruleScreen extends Screen {
         renderBackground(g);
 
         // Panel
-        g.fill(px, py, px + PW, py + PH, 0xCC000000);
-        g.renderOutline(px, py, PW, PH, 0xFF444444);
+        g.fill(px, py, px + PW, py + PH, GameruleHelper.COLOR_PANEL_BG);
+        g.renderOutline(px, py, PW, PH, GameruleHelper.COLOR_PANEL_BORDER);
 
-        // Title
         // List area depends on mode
         int listTop = tab == 0 ? py + 2 : py + 24;
         int listBottom = tab == 0 ? py + PH - 30 : py + PH - 4;
         int listH = listBottom - listTop;
 
         int maxScroll = Math.max(0, entries.size() - VISIBLE);
-        scroll = clamp(scroll, 0, maxScroll);
+        scroll = GameruleHelper.clamp(scroll, 0, maxScroll);
 
         // Render each entry
         for (int i = 0; i < entries.size(); i++) {
             EntryWidgets ew = entries.get(i);
             AbstractWidget w = ew.control;
 
-            int cardY = listTop + i * ENTRY_H - (int) scroll * ENTRY_H;
+            int cardY = listTop + i * ENTRY_H - scroll * ENTRY_H;
             boolean inView = cardY + ENTRY_H > listTop && cardY < listBottom;
             if (!inView) { w.visible = false; continue; }
 
@@ -218,14 +236,15 @@ public class GameruleScreen extends Screen {
 
             // Rule name + "?" — only if inside list bounds
             if (cardY + 11 >= listTop && cardY + 11 <= listBottom) {
-                String nameStr = GameruleHelper.getDisplayName(ew.ruleId).getString();
+                // Use cached display name
+                String nameStr = displayNameCache.getOrDefault(ew.ruleId, ew.ruleId);
                 int nameX = px + 10;
                 int nameY = cardY + 11;
                 int maxNameW = ew.type.equals("bool") ? 206 : 146;
                 if (font.width(nameStr) > maxNameW) {
                     nameStr = font.plainSubstrByWidth(nameStr, maxNameW - 10) + "...";
                 }
-                g.drawString(font, nameStr, nameX, nameY, 0xFFFFFF);
+                g.drawString(font, nameStr, nameX, nameY, GameruleHelper.COLOR_TEXT_WHITE);
                 int nameW = font.width(nameStr);
 
                 // Help "?" button
@@ -233,23 +252,24 @@ public class GameruleScreen extends Screen {
                 int qmY = cardY + 10;
                 int qmS = 10;
                 boolean hoverQM = mx >= qmX && mx <= qmX + qmS && my >= qmY && my <= qmY + qmS;
-                int qmBg = hoverQM ? 0xFF888888 : 0xFF555555;
+                int qmBg = hoverQM ? GameruleHelper.COLOR_GRAY_HOVER : GameruleHelper.COLOR_GRAY;
                 g.fill(qmX, qmY, qmX + qmS, qmY + qmS, qmBg);
-                g.drawCenteredString(font, "?", qmX + qmS / 2, qmY + 1, 0xFFFFFF);
+                g.drawCenteredString(font, "?", qmX + qmS / 2, qmY + 1, GameruleHelper.COLOR_TEXT_WHITE);
 
-                // Tooltip
+                // Tooltip — rendered after super.render to avoid overdraw
                 if (hoverQM) {
-                    g.renderTooltip(font,
-                        Component.literal(GameruleHelper.getDescriptionString(ew.ruleId)), mx, my);
+                    String desc = descriptionCache.getOrDefault(ew.ruleId, "");
+                    g.renderTooltip(font, Component.literal(desc), mx, my);
                 }
             }
 
-            // Control widget
-            int wY = cardY + (ENTRY_H - (ew.type.equals("bool") ? 16 : 18)) / 2;
+            // Control widget — positioned using widget's own public dimensions
+            int wY = cardY + (ENTRY_H - (ew.type.equals("bool")
+                    ? RuleToggleButton.H : RuleNumberWidget.WIDGET_HEIGHT)) / 2;
             if (ew.type.equals("bool")) {
-                w.setX(px + PW - 64);
+                w.setX(px + PW - RuleToggleButton.W - 8);
             } else {
-                w.setX(px + PW - 124);
+                w.setX(px + PW - RuleNumberWidget.TOTAL_WIDTH - 8);
             }
             w.setY(wY);
 
@@ -257,15 +277,26 @@ public class GameruleScreen extends Screen {
             if (!widgetInView) { w.visible = false; }
         }
 
-        // Scrollbar
-        if (maxScroll > 0) {
-            int barH = Math.max(10, (VISIBLE * listH) / (entries.size() * ENTRY_H));
-            int barY = listTop + (int)(scroll / maxScroll * (listH - barH));
-            g.fill(px + PW - 4, barY, px + PW - 2, barY + barH, 0xFF888888);
-        }
+        // Scrollbar — extracted shared logic
+        drawScrollbar(g, px + PW - 4, listTop, listH, entries.size(), VISIBLE, ENTRY_H,
+                scroll, maxScroll);
 
         // Renders ALL widgets (buttons, search, entry controls) — Minecraft handles events
         super.render(g, mx, my, pt);
+    }
+
+    /**
+     * Draw a vertical scrollbar. Shared pattern with CustomizeRulesScreen.
+     */
+    static void drawScrollbar(GuiGraphics g, int barX, int listTop, int listH,
+                               int itemCount, int visibleCount, int entryH,
+                               int scroll, int maxScroll) {
+        if (maxScroll <= 0) return;
+        int barW = 2;
+        int totalScrollH = itemCount * entryH;
+        int barH = Math.max(10, (visibleCount * listH) / totalScrollH);
+        int barY = listTop + (int)((double) scroll / maxScroll * (listH - barH));
+        g.fill(barX, barY, barX + barW, barY + barH, 0xFF888888);
     }
 
     // ===== Scroll =====
@@ -273,7 +304,7 @@ public class GameruleScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mx, double my, double dy) {
         int maxScroll = Math.max(0, entries.size() - VISIBLE);
-        scroll = clamp(scroll - dy, 0, maxScroll);
+        scroll = GameruleHelper.clamp(scroll - (int) dy, 0, maxScroll);
         return true;
     }
 

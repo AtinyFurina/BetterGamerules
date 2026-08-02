@@ -12,23 +12,26 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.regex.Pattern;
+
 /**
  * A combined slider + text input widget for integer game rules.
+ * Supports both vanilla and modded integer gamerules.
  *
  * Two input modes, always visible and bidirectionally synced:
  *   1. Slider (left)  — Quick/drag adjustment for rough values
  *   2. Input box (right) — Type exact value for precision
  *
- * Layout: [ ═══════●═══════ ] [  123  ]
- *          ─── slider 80px ──   ─input 32px─
- *
  * Debounce strategy:
- *   - Slider: updates input box live during drag, sends packet on mouse RELEASE
+ *   - Slider: updates input box live during drag, sends packet on mouse RELEASE and click
  *   - Input box: updates slider live during typing, sends packet on ENTER key
  *
- * Uses min/max/clamp helpers instead of Java 21's Math.clamp for Java 17 compat.
+ * Uses shared clamp helpers from GameruleHelper for Java 17 compat.
  */
 public class RuleNumberWidget extends AbstractWidget {
+
+    public static final int TOTAL_WIDTH = 116;
+    public static final int WIDGET_HEIGHT = 18;
 
     private final String ruleId;
     private int value;
@@ -39,63 +42,59 @@ public class RuleNumberWidget extends AbstractWidget {
     // Layout
     private final int inputWidth;
     private final int sliderWidth;
-    private final int totalWidth;
     private static final int GAP = 4;
-    private static final int WIDGET_HEIGHT = 18;
     private static final int EDITBOX_DX = 3;
     private static final int EDITBOX_DY = 5;
 
-    // Colors
-    private static final int GRAY_TRACK = 0xFF555555;
-    private static final int GREEN_TRACK = 0xFF5B8731;
+    // Colors (using shared palette from GameruleHelper)
+    private static final int GRAY_TRACK = GameruleHelper.COLOR_GRAY;
+    private static final int GREEN_TRACK = GameruleHelper.COLOR_GREEN;
     private static final int WHITE_HANDLE = 0xFFFFFFFF;
-    private static final int INPUT_BG = 0xCC000000;
-    private static final int INPUT_BORDER = 0xFF555555;
-    private static final int FOCUS_BORDER = 0xFF5B8731;
+    private static final int INPUT_BG = GameruleHelper.COLOR_PANEL_BG;
+    private static final int INPUT_BORDER = GameruleHelper.COLOR_GRAY;
+    private static final int FOCUS_BORDER = GameruleHelper.COLOR_GREEN;
 
     // Sub-widgets
     private final EditBox inputBox;
     private boolean inputFocused = false;
     private boolean dragging = false;
 
-    // ===== Java 17 compatible clamp helpers =====
-    private static int clamp(int val, int min, int max) {
-        return Math.max(min, Math.min(max, val));
-    }
-    private static float clamp(float val, float min, float max) {
-        return Math.max(min, Math.min(max, val));
-    }
-    private static double clamp(double val, double min, double max) {
-        return Math.max(min, Math.min(max, val));
-    }
+    // Cached display value to avoid per-frame String.valueOf + font.width
+    private String cachedValueStr;
+    private int cachedValue = Integer.MIN_VALUE;
+
+    // Precompiled regex for input filtering
+    private static final Pattern DIGITS_PATTERN = Pattern.compile("-?\\d*");
 
     public RuleNumberWidget(int x, int y, String ruleId, int initialValue,
                             int min, int max, Font font) {
-        super(x, y, 116, WIDGET_HEIGHT, Component.empty()); // fixed total width
+        super(x, y, TOTAL_WIDTH, WIDGET_HEIGHT, Component.empty());
         this.ruleId = ruleId;
-        this.inputWidth = GameruleHelper.getInputWidth(ruleId);
-        this.sliderWidth = 116 - GAP - this.inputWidth;
-        this.totalWidth = 116;
-        this.value = clamp(initialValue, min, max);
         this.minValue = min;
         this.maxValue = max;
         this.font = font;
 
-        // Create the text input box with dynamic width
+        // Dynamic input width based on value magnitude
+        this.inputWidth = GameruleHelper.getInputWidth(ruleId, initialValue);
+        this.sliderWidth = TOTAL_WIDTH - GAP - this.inputWidth;
+        this.value = GameruleHelper.clamp(initialValue, min, max);
+        this.cachedValueStr = String.valueOf(this.value);
+        this.cachedValue = this.value;
+
+        // Create the text input box (accounting for DX inset)
         this.inputBox = new EditBox(
                 font,
                 x + this.sliderWidth + GAP + EDITBOX_DX, y + EDITBOX_DY,
-                this.inputWidth, WIDGET_HEIGHT,
+                this.inputWidth - EDITBOX_DX, WIDGET_HEIGHT,
                 Component.empty()
         );
-        this.inputBox.setValue(String.valueOf(this.value));
+        this.inputBox.setValue(this.cachedValueStr);
         this.inputBox.setMaxLength(10);
-        // Only allow digits and an optional leading minus sign
-        this.inputBox.setFilter(text -> text == null || text.isEmpty() || text.matches("-?\\d*"));
-        // Sync slider position as user types
+        this.inputBox.setFilter(text -> text == null || text.isEmpty()
+                || DIGITS_PATTERN.matcher(text).matches());
         this.inputBox.setResponder(this::onInputChanged);
         this.inputBox.setBordered(false);
-        this.inputBox.setTextColor(0xE0E0E0);
+        this.inputBox.setTextColor(GameruleHelper.COLOR_TEXT_DIM);
     }
 
     // ========== Slider Rendering ==========
@@ -119,7 +118,7 @@ public class RuleNumberWidget extends AbstractWidget {
         // 3. Slider handle — 10px, centered on track
         int handleSize = 10;
         int handleX = getX() + fillWidth - handleSize / 2;
-        handleX = clamp(handleX, getX(), getX() + this.sliderWidth - handleSize);
+        handleX = GameruleHelper.clamp(handleX, getX(), getX() + this.sliderWidth - handleSize);
         g.fill(handleX, getY() + 4, handleX + handleSize, getY() + 4 + handleSize, WHITE_HANDLE);
 
         // 4. Input box area
@@ -129,36 +128,44 @@ public class RuleNumberWidget extends AbstractWidget {
         g.renderOutline(inputX, getY(), this.inputWidth, WIDGET_HEIGHT, borderColor);
 
         if (inputFocused) {
-            // Show EditBox for typing
             this.inputBox.render(g, mouseX, mouseY, partialTick);
         } else {
-            // Show centered number text
-            String text = String.valueOf(this.value);
-            int textW = font.width(text);
+            // Update cached display string if value changed
+            if (this.value != this.cachedValue) {
+                this.cachedValueStr = String.valueOf(this.value);
+                this.cachedValue = this.value;
+            }
+            int textW = font.width(this.cachedValueStr);
             int cx = inputX + this.inputWidth / 2;
             int cy = getY() + (WIDGET_HEIGHT - 8) / 2;
-            g.drawString(font, text, cx - textW / 2, cy, 0xE0E0E0);
+            g.drawString(font, this.cachedValueStr, cx - textW / 2, cy, GameruleHelper.COLOR_TEXT_DIM);
         }
     }
 
-    // ========== Slider Interaction (Fuzzy Adjustment) ==========
+    // ========== Slider Interaction ==========
 
     @Override
     public void onClick(double mouseX, double mouseY) {
         if (mouseX >= getX() && mouseX < getX() + this.sliderWidth) {
+            // Clear input focus when clicking slider
+            if (this.inputFocused) {
+                this.inputFocused = false;
+                this.inputBox.setFocused(false);
+            }
             updateValueFromSlider((int) mouseX);
+            sendUpdatePacket(); // FIXED: click on slider now syncs immediately
         } else {
             this.inputBox.setFocused(true);
-            this.inputBox.mouseClicked(mouseX, mouseY, 0);
             this.inputFocused = true;
         }
     }
 
-    // Made public so SimpleModeTab/AdvancedModeTab can delegate drag events
     @Override
     public void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
-        updateValueFromSlider((int) mouseX);
-        this.dragging = true;
+        if (mouseX >= getX() && mouseX < getX() + this.sliderWidth) {
+            updateValueFromSlider((int) mouseX);
+            this.dragging = true;
+        }
     }
 
     @Override
@@ -170,25 +177,40 @@ public class RuleNumberWidget extends AbstractWidget {
         }
     }
 
-    private void updateValueFromSlider(int mouseX) {
-        float progress = (float)(mouseX - getX()) / this.sliderWidth;
-        progress = clamp(progress, 0f, 1f);
-        int newValue = minValue + Math.round(progress * (maxValue - minValue));
-        newValue = clamp(newValue, minValue, maxValue);
-
-        if (newValue != this.value) {
-            this.value = newValue;
-            this.inputBox.setValue(String.valueOf(newValue));
+    // FIXED: clear inputFocused when widget loses focus
+    @Override
+    public void setFocused(boolean focused) {
+        super.setFocused(focused);
+        if (!focused && this.inputFocused) {
+            this.inputFocused = false;
+            this.inputBox.setFocused(false);
+            this.inputBox.setValue(String.valueOf(this.value));
         }
     }
 
-    // ========== Input Box Interaction (Precise Adjustment) ==========
+    private void updateValueFromSlider(int mouseX) {
+        float progress = (float)(mouseX - getX()) / this.sliderWidth;
+        progress = GameruleHelper.clamp(progress, 0f, 1f);
+        int newValue = minValue + Math.round(progress * (maxValue - minValue));
+        newValue = GameruleHelper.clamp(newValue, minValue, maxValue);
+
+        if (newValue != this.value) {
+            this.value = newValue;
+            this.cachedValueStr = String.valueOf(newValue);
+            this.cachedValue = newValue;
+            this.inputBox.setValue(this.cachedValueStr);
+        }
+    }
+
+    // ========== Input Box Interaction ==========
 
     private void onInputChanged(String text) {
         if (text == null || text.isEmpty()) return;
         try {
             int newValue = Integer.parseInt(text);
-            this.value = clamp(newValue, minValue, maxValue);
+            this.value = GameruleHelper.clamp(newValue, minValue, maxValue);
+            this.cachedValueStr = String.valueOf(this.value);
+            this.cachedValue = this.value;
         } catch (NumberFormatException e) {
             // Intermediate state during typing (e.g. user typed "-")
         }
@@ -230,8 +252,10 @@ public class RuleNumberWidget extends AbstractWidget {
         }
         try {
             int parsed = Integer.parseInt(text);
-            this.value = clamp(parsed, minValue, maxValue);
-            this.inputBox.setValue(String.valueOf(this.value));
+            this.value = GameruleHelper.clamp(parsed, minValue, maxValue);
+            this.cachedValueStr = String.valueOf(this.value);
+            this.cachedValue = this.value;
+            this.inputBox.setValue(this.cachedValueStr);
             sendUpdatePacket();
         } catch (NumberFormatException e) {
             this.inputBox.setValue(String.valueOf(this.value));
@@ -266,8 +290,10 @@ public class RuleNumberWidget extends AbstractWidget {
     }
 
     public void setValue(int newValue) {
-        this.value = clamp(newValue, minValue, maxValue);
-        this.inputBox.setValue(String.valueOf(this.value));
+        this.value = GameruleHelper.clamp(newValue, minValue, maxValue);
+        this.cachedValueStr = String.valueOf(this.value);
+        this.cachedValue = this.value;
+        this.inputBox.setValue(this.cachedValueStr);
     }
 
     @Override

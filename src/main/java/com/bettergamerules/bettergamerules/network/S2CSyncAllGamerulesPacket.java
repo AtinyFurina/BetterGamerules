@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -17,6 +18,11 @@ import java.util.function.Supplier;
  */
 public class S2CSyncAllGamerulesPacket {
 
+    private static final int MAX_RULE_ID_LEN = 128;
+    private static final int MAX_VALUE_LEN = 32;
+    private static final int MAX_TYPE_LEN = 16;
+    private static final int MAX_RULE_COUNT = 512;
+
     private final Map<String, GameruleHelper.RuleData> rules;
 
     public S2CSyncAllGamerulesPacket(Map<String, GameruleHelper.RuleData> rules) {
@@ -24,26 +30,29 @@ public class S2CSyncAllGamerulesPacket {
     }
 
     public Map<String, GameruleHelper.RuleData> getRules() {
-        return rules;
+        return Collections.unmodifiableMap(rules);
     }
 
     public static void encode(S2CSyncAllGamerulesPacket packet, FriendlyByteBuf buf) {
         buf.writeInt(packet.rules.size());
-        for (Map.Entry<String, GameruleHelper.RuleData> entry : packet.rules.entrySet()) {
-            GameruleHelper.RuleData data = entry.getValue();
-            buf.writeUtf(data.id());
-            buf.writeUtf(data.value());
-            buf.writeUtf(data.type());
+        for (GameruleHelper.RuleData data : packet.rules.values()) {
+            buf.writeUtf(data.id(), MAX_RULE_ID_LEN);
+            buf.writeUtf(data.value(), MAX_VALUE_LEN);
+            buf.writeUtf(data.type(), MAX_TYPE_LEN);
         }
     }
 
     public static S2CSyncAllGamerulesPacket decode(FriendlyByteBuf buf) {
         int count = buf.readInt();
+        // Bounds check to prevent huge allocations from corrupted data
+        if (count < 0 || count > MAX_RULE_COUNT) {
+            return new S2CSyncAllGamerulesPacket(Map.of());
+        }
         Map<String, GameruleHelper.RuleData> rules = new LinkedHashMap<>();
         for (int i = 0; i < count; i++) {
-            String id = buf.readUtf();
-            String value = buf.readUtf();
-            String type = buf.readUtf();
+            String id = buf.readUtf(MAX_RULE_ID_LEN);
+            String value = buf.readUtf(MAX_VALUE_LEN);
+            String type = buf.readUtf(MAX_TYPE_LEN);
             rules.put(id, new GameruleHelper.RuleData(id, value, type));
         }
         return new S2CSyncAllGamerulesPacket(rules);
@@ -51,8 +60,6 @@ public class S2CSyncAllGamerulesPacket {
 
     public static void handle(S2CSyncAllGamerulesPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            // Client-side: update the GameruleScreen with received data
-            // Must run on the main (render) thread
             if (Minecraft.getInstance().screen instanceof GameruleScreen screen) {
                 screen.updateGamerules(packet.rules);
             }

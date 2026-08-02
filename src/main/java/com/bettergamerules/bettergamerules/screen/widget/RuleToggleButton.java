@@ -2,7 +2,9 @@ package com.bettergamerules.bettergamerules.screen.widget;
 
 import com.bettergamerules.bettergamerules.network.C2SSyncGamerulePacket;
 import com.bettergamerules.bettergamerules.network.ModNetwork;
+import com.bettergamerules.bettergamerules.util.GameruleHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -18,8 +20,8 @@ public class RuleToggleButton extends AbstractWidget {
     private final String ruleId;
     private boolean value;
 
-    private static final int W = 56;
-    private static final int H = 16;
+    public static final int W = 56;
+    public static final int H = 16;
 
     public RuleToggleButton(int x, int y, String ruleId, boolean initialValue) {
         super(x, y, W, H, Component.empty());
@@ -38,12 +40,12 @@ public class RuleToggleButton extends AbstractWidget {
     protected void renderWidget(GuiGraphics g, int mx, int my, float pt) {
         boolean hovered = isMouseOver(mx, my);
 
-        // Background — vanilla button style with darker/lighter states
+        // Background — vanilla button style, using shared color palette
         int bg;
         if (value) {
-            bg = hovered ? 0xFF6B9F3F : 0xFF5B8731; // green (on), brighter when hovered
+            bg = hovered ? GameruleHelper.COLOR_GREEN_HOVER : GameruleHelper.COLOR_GREEN;
         } else {
-            bg = hovered ? 0xFF777777 : 0xFF555555; // gray (off), brighter when hovered
+            bg = hovered ? GameruleHelper.COLOR_GRAY_HOVER : GameruleHelper.COLOR_GRAY;
         }
         g.fill(getX(), getY(), getX() + W, getY() + H, bg);
 
@@ -54,18 +56,15 @@ public class RuleToggleButton extends AbstractWidget {
         // Text — centered, localized
         String key = value ? "gamerule.bettergamerules.toggle.on" : "gamerule.bettergamerules.toggle.off";
         Component text = Component.translatable(key);
-        var font = Minecraft.getInstance().font;
+        Font font = Minecraft.getInstance().font;
         int pw = font.width(text);
         int tx = getX() + (W - pw) / 2;
         int ty = getY() + (H - 8) / 2;
-        g.drawString(font, text, tx, ty, 0xFFFFFF);
+        g.drawString(font, text, tx, ty, GameruleHelper.COLOR_TEXT_WHITE);
     }
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput n) {
         this.defaultButtonNarrationText(n);
     }
-
-    public boolean getValue() { return value; }
-    public void setValue(boolean v) { this.value = v; }
 }

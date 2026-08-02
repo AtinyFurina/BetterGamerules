@@ -2,19 +2,22 @@ package com.bettergamerules.bettergamerules;
 
 import com.bettergamerules.bettergamerules.config.ClientConfig;
 import com.bettergamerules.bettergamerules.network.ModNetwork;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+/**
+ * Main mod class for BetterGamerules.
+ * Registers client config and network channel.
+ */
 @Mod(BetterGamerules.MOD_ID)
 public class BetterGamerules {
     public static final String MOD_ID = "bettergamerules";
 
     public BetterGamerules() {
-        var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         // Register client-side config
         ModLoadingContext.get().registerConfig(
@@ -25,13 +28,9 @@ public class BetterGamerules {
 
         // Register network channel during common setup
         modEventBus.addListener(this::onCommonSetup);
-
-        // Register ourselves for server and other game events
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void onCommonSetup(final FMLCommonSetupEvent event) {
-        // Register network packets on the main thread
         event.enqueueWork(ModNetwork::register);
     }
 }
